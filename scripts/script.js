@@ -5,12 +5,13 @@ let formRef = document.querySelector('#formPrincipal')
 
 btnRef.addEventListener('click',(e)=>loginUser(e))
 
+
 function loginUser(e) {
     e.preventDefault() 
 
     const userData = {
-        email: 'ivin32@mail.com.br',
-        password: '1234'
+        email: `${inputEmailRef.value}`,
+        password: `${inputPasswordRef.value}`
     }
     const requestHeaders = {
         'Accept': 'application/json',
@@ -34,7 +35,6 @@ function loginUser(e) {
         }
     )
 }
-
 
 
 

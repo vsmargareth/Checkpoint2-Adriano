@@ -44,7 +44,7 @@ function signupUser() {
         }
     })
     .then(data => {
-        window.location.href = '/tarefas.html';
+        window.location.href = './tarefas.html';
     })
     .catch(error => {
         console.error(error);
