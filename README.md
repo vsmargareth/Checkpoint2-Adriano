@@ -1,5 +1,5 @@
 # Checkpoint II
-## ntegração com API To-Do App da digital house
+## Interação com API To-Do App da digital house
 ## Objetivos:
 * Cadastrar usuário
 * Login usuário
