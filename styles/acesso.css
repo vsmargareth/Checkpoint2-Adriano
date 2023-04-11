@@ -63,10 +63,17 @@ button {
   font-weight: 400;
   font-size: 1em;
 }
+small{
+  display: none;
+}
 
 .form-header {
   color: grey;
   font-size: 2em;
+}
+.error small{
+  display: block;
+  color: red
 }
 .ingressar{
   text-align: center;

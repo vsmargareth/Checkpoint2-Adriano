@@ -223,6 +223,10 @@ a {
   color: grey;
   text-decoration: line-through;
 }
+.excluir{
+  color: red
+
+}
 
 #skeleton .descricao{
   background-color: rgb(189, 189, 189);
