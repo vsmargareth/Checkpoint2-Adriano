@@ -13,8 +13,6 @@ let dot = document.querySelector('.not-done')
 
 
 
-
-
 let listaDeTarefas = []
 let listaTarefasFinalizadas = []
 
@@ -40,6 +38,8 @@ function adicionarTarefa() {
           tasks => {
             listaDeTarefas.push(tarefaParaInserir)
             novaTarefaRef.value = ""
+            tarefasPendentesRef.innerHTML = ''
+
             getTasks()
 
           }
@@ -92,13 +92,15 @@ function showTasks(tarefa, target) {
   if (target === "A Fazer") {
     tarefasPendentesRef.innerHTML = ""
     for (let task of tarefa) {
+      const createdAtDate = new Date(task.createdAt)
+      const createAtFormated = new Intl.DateTimeFormat('pt-BR').format(createdAtDate)
       tarefasPendentesRef.innerHTML += `
       
           <li class="tarefa">
             <div class="not-done"id="${task.id}"></div>
             <div class="descricao">
               <p class="nome" id="nomeTarefa">${task.description}</p>
-              <p class="timestamp">Criada em: ${task.createdAt}</p>
+              <p class="timestamp">Criada em: ${createAtFormated}</p>
               <button class="excluir" id=${task.id}> excluir</button>
             </div>
         </li>
@@ -107,19 +109,23 @@ function showTasks(tarefa, target) {
   } else {
     tarefasTerminadasRef.innerHTML = ''
     for (let task of tarefa) {
+      const createdAtDate = new Date(task.createdAt)
+      const createAtFormated = new Intl.DateTimeFormat('pt-BR').format(createdAtDate)
       tarefasTerminadasRef.innerHTML += `
       <div>
           <li class="tarefa">
             <div class="not-done" id="${task.id}"></div>
             <div class="descricao">
               <p class="nome" id="nomeTarefa">${task.description}</p>
-              <p class="timestamp">Criada em: Data</p>
+              <p class="timestamp" >${createAtFormated}</p>
+              
             </div>
         </li>
       </div>
           `
     }
   }
+  addEventListenersToButtonsDone()
   addEventListenersToButtonsDelete()
 }
 
@@ -138,7 +144,21 @@ function addEventListenersToButtonsDelete() {
 
   )
 }
+function addEventListenersToButtonsDone() {
+  const buttonDoneArray = Array.from(tarefasPendentesRef.children)
+  buttonDoneArray.map(
+    (item, index) => {
+      const selecionaDivDescricao = item.children[0]
+      // console.log(selecionaDivDescricao)
 
+      const indexTarefaAtual = listaDeTarefas[index]
+
+      selecionaDivDescricao.addEventListener('click', () => changeStatus(indexTarefaAtual))
+
+    }
+
+  )
+}
 function getUserData() {
   let apiLink = 'https://todo-api.ctd.academy/v1/users/getMe'
 
@@ -188,6 +208,37 @@ function deleteTask(taskIndex) {
         )
       } else {
         console.log('tarefa não foi excluida')
+      }
+
+    }
+  )
+  tarefasPendentesRef.innerHTML = ''
+  getTasks()
+
+}
+function changeStatus(taskIndex) {
+  const tarefaParaInserir =
+  {
+    "description": novaTarefaRef.value,
+    "completed": true
+  }
+  // configurações do request
+  let requestConfig = {
+    method: 'PUT',
+    headers: requestHeaders,
+    body: JSON.stringify(tarefaParaInserir)
+  }
+  // Realização da Request para criar uma nova Task
+  fetch(`https://todo-api.ctd.academy/v1/tasks/${taskIndex.id}`, requestConfig).then(
+    response => {
+      if (response.ok) {
+        response.json().then(
+          tasks => {
+            alert("tarefa concluída")
+          }
+        )
+      } else {
+        console.log('erro tarefa concluida')
       }
 
     }
