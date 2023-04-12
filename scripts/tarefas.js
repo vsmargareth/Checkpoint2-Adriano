@@ -18,72 +18,107 @@ let dot = document.querySelector('.not-done')
 let listaDeTarefas = []
 let listaTarefasFinalizadas = []
 
-function adicionarTarefa() {
-  //Informações sobre a tarefa
-  const tarefaParaInserir =
-  {
-    "description": novaTarefaRef.value,
-    "completed": false
-  }
+
+
+function deleteTask(taskIndex) {
   // configurações do request
   let requestConfig = {
-    method: 'POST',
+    method: 'DELETE',
     headers: requestHeaders,
-    body: JSON.stringify(tarefaParaInserir)
-
   }
+
   // Realização da Request para criar uma nova Task
-  fetch('https://todo-api.ctd.academy/v1/tasks', requestConfig).then(
+  fetch(`https://todo-api.ctd.academy/v1/tasks/${taskIndex.id}`, requestConfig).then(
     response => {
       if (response.ok) {
-        novaTarefaRef.value = ""
+
+        console.log("tarefa excluida")
         getTasks()
       } else {
-        console.log('tarefa não adicionada')
+        console.log('tarefa não foi excluida')
       }
-
 
     }
   )
-} // fechamento adiciona tarefa 
-
-//comunicação com banco de dados
-
-function logoutUser() {
-  window.location.href = '/index.html'
-  localStorage.clear()
 }
-function getTasks() {
-  listaDeTarefas = []
-  listaTarefasFinalizadas = []
-  let requestConfig = {
-    method: 'GET',
-    headers: requestHeaders
+function changeStatus(taskIndex) {
+
+  let tarefaParaInserir = {}
+  if (taskIndex.completed) {
+    tarefaParaInserir = { completed: false }
+  } else {
+    tarefaParaInserir = { completed: true }
   }
-
-  fetch('https://todo-api.ctd.academy/v1/tasks', requestConfig).then(
+  // {
+  //   completed: true
+  // }
+  // configurações do request
+  let requestConfig = {
+    method: 'PUT',
+    headers: requestHeaders,
+    body: JSON.stringify(tarefaParaInserir)
+  }
+  // Realização da Request para criar uma nova Task
+  fetch(`https://todo-api.ctd.academy/v1/tasks/${taskIndex.id}`, requestConfig).then(
     response => {
-
       if (response.ok) {
-        response.json().then(
-          tasks => {
-
-            for (let task of tasks) {
-              if (task.completed) {
-                // Adicionar no array de listaTarefasFinalizada
-                listaTarefasFinalizadas.push(task)
-
-              } else {
-                // Adicionar no array de listaDeTarefas
-                listaDeTarefas.push(task)
-              }
-            }
-            showTasks(listaDeTarefas, "A Fazer");
-            showTasks(listaTarefasFinalizadas, "Finalizadas")
-          }
-        )
+        getTasks()
+      } else {
+        console.log('erro tarefa concluida')
       }
+
     }
+  )
+
+
+}
+function CorfimDeleteTask(task) {
+  Swal.fire({
+    title: 'Você está certo(a) disso?',
+    text: "Você não poderá reverter essa ação!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sim, exclua a tarefa!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      deleteTask(task);
+    }
+  });
+}
+function addEventListenersToButtonsDelete(divReferencia, arrayTarefa) {
+  const buttonDeleteArray = Array.from(divReferencia.children)
+
+  buttonDeleteArray.map(
+    (item, index) => {
+      const selecionaDivDescricao = item.children[1]
+
+      const selecionarBotaoDelete = selecionaDivDescricao.children[2]
+
+      const indexTarefaAtual = arrayTarefa[index]
+
+      selecionarBotaoDelete.addEventListener('click', () => CorfimDeleteTask(indexTarefaAtual))
+
+    }
+
+  )
+}
+function addEventListenersToButtonsDone(divReferencia, arrayTarefa) {
+  let arrayReferencia = divReferencia.children
+
+  const buttonDoneArray = Array.from(arrayReferencia)
+  buttonDoneArray.map(
+    (item, index) => {
+      const selecionaDivNotDone = item.children[0]
+      // console.log(selecionaDivNotDone)
+
+      const indexTarefaAtual = arrayTarefa[index]
+
+      selecionaDivNotDone.addEventListener('click', () => changeStatus(indexTarefaAtual))
+
+    }
+
   )
 }
 function showTasks(tarefa, target) {
@@ -130,40 +165,42 @@ function showTasks(tarefa, target) {
 
 
 }
+function getTasks() {
+  listaDeTarefas = []
+  listaTarefasFinalizadas = []
+  let requestConfig = {
+    method: 'GET',
+    headers: requestHeaders
+  }
 
-function addEventListenersToButtonsDelete(divReferencia, arrayTarefa) {
-  const buttonDeleteArray = Array.from(divReferencia.children)
+  fetch('https://todo-api.ctd.academy/v1/tasks', requestConfig).then(
+    response => {
 
-  buttonDeleteArray.map(
-    (item, index) => {
-      const selecionaDivDescricao = item.children[1]
+      if (response.ok) {
+        response.json().then(
+          tasks => {
 
-      const selecionarBotaoDelete = selecionaDivDescricao.children[2]
+            for (let task of tasks) {
+              if (task.completed) {
+                // Adicionar no array de listaTarefasFinalizada
+                listaTarefasFinalizadas.push(task)
 
-      const indexTarefaAtual = arrayTarefa[index]
-
-      selecionarBotaoDelete.addEventListener('click', () => deleteTask(indexTarefaAtual))
-
+              } else {
+                // Adicionar no array de listaDeTarefas
+                listaDeTarefas.push(task)
+              }
+            }
+            showTasks(listaDeTarefas, "A Fazer");
+            showTasks(listaTarefasFinalizadas, "Finalizadas")
+          }
+        )
+      }
     }
-
   )
 }
-function addEventListenersToButtonsDone(divReferencia, arrayTarefa) {
-  let arrayReferencia = divReferencia.children
-
-  const buttonDoneArray = Array.from(arrayReferencia)
-  buttonDoneArray.map(
-    (item, index) => {
-      const selecionaDivNotDone = item.children[0]
-      // console.log(selecionaDivNotDone)
-
-      const indexTarefaAtual = arrayTarefa[index]
-
-      selecionaDivNotDone.addEventListener('click', () => changeStatus(indexTarefaAtual))
-
-    }
-
-  )
+function nameUser(response) {
+  const userName = sessionStorage.getItem("userName")
+  nameUserRef.innerHTML = `${userName}`
 }
 function getUserData() {
   let apiLink = 'https://todo-api.ctd.academy/v1/users/getMe'
@@ -176,6 +213,13 @@ function getUserData() {
     response => {
       console.log(response)
       if (response.ok) {
+        response.json().then((data) => {
+          sessionStorage.setItem(
+            "userName",
+            `${data.firstName} ${data.lastName}`
+          )
+          nameUser()
+        })
         getTasks()
       } else {
         console.log(response)
@@ -187,10 +231,39 @@ function getUserData() {
     }
   )
 }
-function nameUser(response) {
-  // nameUserRef.innerHTML = response.firstName
-  console.log(response.firstName)
+function logoutUser() {
+  window.location.href = '/index.html'
+  localStorage.clear()
 }
+function adicionarTarefa() {
+  //Informações sobre a tarefa
+  const tarefaParaInserir =
+  {
+    "description": novaTarefaRef.value,
+    "completed": false
+  }
+  // configurações do request
+  let requestConfig = {
+    method: 'POST',
+    headers: requestHeaders,
+    body: JSON.stringify(tarefaParaInserir)
+
+  }
+  // Realização da Request para criar uma nova Task
+  fetch('https://todo-api.ctd.academy/v1/tasks', requestConfig).then(
+    response => {
+      if (response.ok) {
+        novaTarefaRef.value = ""
+        getTasks()
+      } else {
+        console.log('tarefa não adicionada')
+      }
+
+
+    }
+  )
+} // fechamento adiciona tarefa 
+
 function checkIfTokenIsValid() {
   if (authToken === null) {
     logoutUser()
@@ -198,78 +271,6 @@ function checkIfTokenIsValid() {
     getUserData()
   }
 }
-function deleteTask(taskIndex) {
-  // configurações do request
-  let requestConfig = {
-    method: 'DELETE',
-    headers: requestHeaders,
-  }
-
-  // Realização da Request para criar uma nova Task
-  fetch(`https://todo-api.ctd.academy/v1/tasks/${taskIndex.id}`, requestConfig).then(
-    response => {
-      if (response.ok) {
-        Swal.fire({
-          title: 'Você deseja mesmo excluir a tarefa?',
-          text: "Você não conseguirá reverter",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Sim,deletar tarefa'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            Swal.fire(
-              'Deleted!',
-              'Your file has been deleted.',
-              'success'
-            )
-          }
-        })
-        console.log("tarefa excluida")
-        getTasks()
-      } else {
-        console.log('tarefa não foi excluida')
-      }
-
-    }
-  )
-
-
-}
-function changeStatus(taskIndex) {
-
-  let tarefaParaInserir = {}
-  if (taskIndex.completed) {
-    tarefaParaInserir = { completed: false }
-  } else {
-    tarefaParaInserir = { completed: true }
-  }
-  // {
-  //   completed: true
-  // }
-  // configurações do request
-  let requestConfig = {
-    method: 'PUT',
-    headers: requestHeaders,
-    body: JSON.stringify(tarefaParaInserir)
-  }
-  // Realização da Request para criar uma nova Task
-  fetch(`https://todo-api.ctd.academy/v1/tasks/${taskIndex.id}`, requestConfig).then(
-    response => {
-      if (response.ok) {
-        getTasks()
-      } else {
-        console.log('erro tarefa concluida')
-      }
-
-    }
-  )
-
-
-}
-
-
 checkIfTokenIsValid()
 
 
@@ -277,5 +278,4 @@ checkIfTokenIsValid()
 closeAppRef.addEventListener('click', logoutUser)
 btnEnviarTarefaRef.addEventListener('click', adicionarTarefa)
 btnEnviarTarefaRef.addEventListener('click', (e) => e.preventDefault())
-// window.addEventListener('click', doneNotDone)
 
