@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>To-Do App Grupo 2</title>
+  <title>To-Do App Login</title>
   <link rel="stylesheet" href="styles/acesso.css">
   <script type="module" src="scripts/login.js" defer></script>
 
@@ -30,10 +30,11 @@
       </label>
       <label>
         Senha:
-        <input id="inputPassword" type="password">
+        <input id="inputPassword" type="password" required>
+        <small id="'passwordWarning"></small>
       </label>
 
-      <button type="submit" id="btn">Acessar</button>
+      <button type="submit" id="btn" disabled>Acessar</button>
 
     </form>
     <div class="ingressar">

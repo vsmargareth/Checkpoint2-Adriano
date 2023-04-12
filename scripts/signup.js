@@ -1,53 +1,103 @@
-const nameUserRef = document.querySelector('#nameUser')
-const lastNameUserRef = document.querySelector('#lastNameUser')
-const emailRef = document.querySelector('#emailUser')
-const passwordRef = document.querySelector('#passwordUser')
-const passwordUserRepeatRef = document.querySelector('#passwordUserRepeat')
-const btnSignUpRef = document.querySelector('#btnSignUp')
+const inputNameRef = document.querySelector('#nameUser');
+const inputLastNameRef = document.querySelector('#lastNameUser');
+const inputEmailRef = document.querySelector('#emailUser');
+const inputPasswordRef = document.querySelector('#passwordUser');
+const inputPasswordRepeatRef = document.querySelector('#passwordUserRepeat');
+const buttonRef = document.querySelector('#btnSignUp');
+const divInputWrapper = document.querySelector('.input-wrapper');
 
-
-
-function verifyUser() {
-    if (passwordRef.value != passwordUserRepeatRef.value) {
-        alert('Senhas precisam ser iguais!')
-    }
+buttonRef.disabled = true
+var formErrors = {
+    nameUser: true,
+    lastNameUser: true,
+    emailUser: true,
+    passwordUser: true,
+    passwordUserRepeat: true
 }
+function userRegister(e) {
+    console.log("entrou na função")
 
-function signupUser() {
-    const userData = {
-        firstName: `${nameUserRef.value}`,
-        lastName: `${lastNameUserRef.value}`,
-        email: `${emailRef.value}`,
-        password: `${passwordRef.value}`
+    var userData = {
+        firstName: inputNameRef.value,
+        lastName: inputLastNameRef.value,
+        email: inputEmailRef.value,
+        password: inputPasswordRef.value
     }
+    let userDataArray = Object.values(userData);
     const requestHeaders = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
     }
 
-
-    const requestConfig = {
+    var requestConfig = {
         method: 'POST',
         headers: requestHeaders,
         body: JSON.stringify(userData)
     }
-
-    fetch('https://todo-api.ctd.academy/v1/users', requestConfig)
-        .then(response => {
+    fetch('https://todo-api.ctd.academy/v1/users', requestConfig).then(
+        response => {
             if (response.ok) {
-                return response.json();
+
+                Swal.fire('Cadastro realizado com sucesso!')
+
+                window.location.href = 'index.html'
+
             } else {
-                throw new Error('Erro ao obter dados do servidor.');
+
+                Swal.fire('O usuário ja foi cadastrado')
+
+
             }
-        })
-        .then(data => {
-            window.location.href = './tarefas.html';
-        })
-        .catch(error => {
-            console.error(error);
-        });
+        }
+    )
+
+
 }
+function checkFormValidity() {
+    // checkAllCamps()
 
-btnSignUpRef.addEventListener('click', verifyUser)
+    const formErrorArray = Object.values(formErrors)
+    const formValidity = formErrorArray.every(item => item === false)
+    console.log(formValidity)
+    buttonRef.disabled = !formValidity
+    if (formValidity) {
+        buttonRef.addEventListener("click", (e) => userRegister(e))
 
-btnSignUpRef.addEventListener('click', (e) => signupUser(e.preventDefault()))
+    } else {
+        console.log("campo errado")
+    }
+}
+function passwordValidity() {
+    let password = inputPasswordRef.value
+    let passwordRepeat = inputPasswordRepeatRef.value
+    let passwordReapeatFather = inputPasswordRepeatRef.parentElement
+
+    if (password === passwordRepeat) { // se as funções forem iguais
+        // Mudar no objeto de erros para false
+        formErrors.passwordUserRepeat = false
+        passwordReapeatFather.classList.remove('error')
+    } else {
+        passwordReapeatFather.classList.add('error')
+    }
+
+    console.log(formErrors)
+    checkFormValidity()
+}
+function inputValidity(inputRef) {
+    const inputValid = inputRef.checkValidity()
+    const inputFather = inputRef.parentElement
+    buttonRef.disable = true
+    if (inputValid) {
+        inputFather.classList.remove('error')
+    } else {
+        inputFather.classList.add('error')
+    }
+    formErrors[inputRef.id] = !inputValid
+}
+inputNameRef.addEventListener('keyup', () => inputValidity(inputNameRef))
+inputLastNameRef.addEventListener('keyup', () => inputValidity(inputLastNameRef))
+inputEmailRef.addEventListener('keyup', () => inputValidity(inputEmailRef))
+inputPasswordRef.addEventListener('keyup', () => inputValidity(inputPasswordRef))
+inputPasswordRepeatRef.addEventListener('keyup', () => passwordValidity())
+
+buttonRef.addEventListener('click', (e) => e.preventDefault())

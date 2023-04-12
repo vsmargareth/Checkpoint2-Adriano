@@ -8,8 +8,8 @@
   <title>To-Do App</title>
   <!-- ---------------- estilos compartilhados entre login e signup ---------------- -->
   <link rel="stylesheet" href="styles/acesso.css">
-
-  <script  type="module" src="/scripts/signup.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script type="module" src="/scripts/signup.js" defer></script>
 </head>
 
 <body>
@@ -25,23 +25,28 @@
 
       <label>
         Nome:
-        <input type="text" id="nameUser" required>
+        <input type="text" id="nameUser" required minlength="3">
+        <small>Nome Inválido</small>
       </label>
       <label>
         Sobrenome:
         <input type="text" id="lastNameUser" required>
+        <small>Campo Inválido</small>
       </label>
       <label>
         Email:
         <input type="email" id="emailUser" required>
+        <small>Email Inválido</small>
       </label>
       <label>
         Senha:
         <input type="password" id="passwordUser" required>
+        <small>Senha fraca</small>
       </label>
       <label>
         Repetir senha:
-        <input type="password" id="passwordUserRepeat" required>
+        <input type="password" id="passwordUserRepeat">
+        <small>Senhas não condizem</small>
       </label>
 
       <button id="btnSignUp">Criar conta</button>

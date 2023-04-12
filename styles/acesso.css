@@ -41,6 +41,10 @@ input {
   border: 1px solid var(--app-grey);
   border-radius: .2em;
 }
+.error input{
+  background-color: #ffdede;
+  border-color: #d90a0a;
+}
 
 input:focus {
   outline: none;
@@ -62,6 +66,10 @@ button {
   margin-top: 2em;
   font-weight: 400;
   font-size: 1em;
+}
+button:disabled{
+  background-color: rgb(82, 79, 79);
+  cursor: default;
 }
 small{
   display: none;
