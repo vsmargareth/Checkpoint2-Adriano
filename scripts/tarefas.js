@@ -209,6 +209,23 @@ function deleteTask(taskIndex) {
   fetch(`https://todo-api.ctd.academy/v1/tasks/${taskIndex.id}`, requestConfig).then(
     response => {
       if (response.ok) {
+        Swal.fire({
+          title: 'Você deseja mesmo excluir a tarefa?',
+          text: "Você não conseguirá reverter",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sim,deletar tarefa'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire(
+              'Deleted!',
+              'Your file has been deleted.',
+              'success'
+            )
+          }
+        })
         console.log("tarefa excluida")
         getTasks()
       } else {

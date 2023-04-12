@@ -5,20 +5,7 @@ let formRef = document.querySelector('#formPrincipal')
 let passwordWarning = document.querySelector('#passwordWarning')
 
 
-function checkIfNotEmpty(e) {
-    e.preventDefault()
-    if (inputEmailRef.value === "" || inputPasswordRef.value === "") {
-        formRef.classList.add('error')
-        passwordWarning.innerHTML = "Campo não pode está vazio"
-    } else {
-        formRef.classList.remove('error')
-        btnRef.disabled = false
 
-
-        btnRef.addEventListener('click', (e) => loginUser(e))
-    }
-
-}
 
 function loginUser(e) {
     const userData = {
@@ -55,8 +42,21 @@ function loginUser(e) {
         }
     )
 }
+function checkIfNotEmpty(e) {
+    e.preventDefault()
+    if (inputEmailRef.value === "" || inputPasswordRef.value === "") {
+        formRef.classList.add('error')
+        passwordWarning.innerHTML = "Campo não pode está vazio"
+    } else {
+        formRef.classList.remove('error')
+        btnRef.disabled = false
+
+        btnRef.addEventListener('click', (e) => loginUser(e))
+    }
+
+}
 inputPasswordRef.addEventListener("focusout", (e) => checkIfNotEmpty(e))
-btnRef.addEventListener('click', (e) => preventDefault(e))
+btnRef.addEventListener('click', (e) => e.preventDefault())
 
 
 
