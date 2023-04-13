@@ -12,6 +12,7 @@ let novaTarefaRef = document.querySelector('#novaTarefa')
 let tarefasPendentesRef = document.querySelector('#tarefasPendentes')
 let tarefasTerminadasRef = document.querySelector('#tarefasTerminadas')
 let dot = document.querySelector('.not-done')
+let tagSmallWarning = document.querySelector('#warningTask')
 
 
 
@@ -258,11 +259,21 @@ function adicionarTarefa() {
       } else {
         console.log('tarefa não adicionada')
       }
-
-
     }
   )
 } // fechamento adiciona tarefa 
+function verificaTarefa() {
+  const inputValid = novaTarefaRef.checkValidity()
+  const inputFather = tagSmallWarning.parentElement
+  console.log(inputValid)
+  if (inputValid) {
+    inputFather.classList.remove('error')
+    adicionarTarefa()
+  } else {
+    console.log('tarefa não adicionada')
+    inputFather.classList.add('error')
+  }
+}
 
 function checkIfTokenIsValid() {
   if (authToken === null) {
@@ -276,6 +287,6 @@ checkIfTokenIsValid()
 
 
 closeAppRef.addEventListener('click', logoutUser)
-btnEnviarTarefaRef.addEventListener('click', adicionarTarefa)
+btnEnviarTarefaRef.addEventListener('click', verificaTarefa)
 btnEnviarTarefaRef.addEventListener('click', (e) => e.preventDefault())
 
